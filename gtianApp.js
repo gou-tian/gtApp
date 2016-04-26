@@ -1,6 +1,6 @@
 /**
- * @author GouTian
- * @E-Mail goutian@foxmail.com
+ * author GouTian
+ * E-Mail goutian@foxmail.com
  * Created on 2016-04-14.
  * Last modified time 2016-04-22 15:56
  */
@@ -8,7 +8,6 @@
   var tian = (function () {
     var type = {};
     var toString = type.toString;
-
     var app = {
       // 获取css属性值
       css: function (obj, attr) {
@@ -178,7 +177,6 @@
         return toString.call(obj).split('object ').pop().trim().split(']').shift();
       }
     };
-
     function getViewportWH() {
       return {
         w: document.documentElement.clientWidth,
@@ -262,13 +260,10 @@
     }
     // 元素拖动
     function drag(dom) {
-
       dom.onmousedown = function (e) {
         this.style.cursor = 'move';
         down.call(this, e);
       };
-
-
       function down(e) {
         e = e || window.event;
         var mouseY = e.clientY - this.offsetTop;
@@ -290,7 +285,6 @@
           // 计算鼠标当前位置
           docX = ev.clientX - x,
           docY = ev.clientY - y;
-
         // 属性值赋值
         dom.style.top = docY + 'px';
         dom.style.left = docX + 'px';
@@ -310,7 +304,6 @@
     // 获取浏览器及其版本
     function getBrowser() {
       var agent = navigator.userAgent.toLowerCase();
-
       var regStr_ie = /msie [\d.]+/gi;
       var regStr_ff = /firefox\/[\d.]+/gi;
       var regStr_chrome = /chrome\/[\d.]+/gi;
@@ -328,7 +321,6 @@
     function judgeIeBrowser(dom) {
       if (this.user !== 'msie') { return false; }
       dom.value = '用户名';
-
       if (this.user === 'msie' && parseInt(this.verinfo) < 10) {
         if (dom.type === 'password') {
           dom.type = 'text';
@@ -357,10 +349,8 @@
             }
           };
         }
-
       }
     }
-
     return {
       css: app.css,
       bufferMove: app.bufferMove,

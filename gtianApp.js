@@ -71,12 +71,25 @@
       addEventBind: function (obj, events, func) {
         if (obj.addEventListener) {
           obj.addEventListener(events, func, false);
-        } else {
+        } else if(obj.attachEvent){
           obj.attachEvent('on' + events, function () {
             func.call(obj);
           });
+        }else{
+          obj["on" + events] = func;
         }
       },
+      // 删除事件
+      removeEvent: function(obj,events,func){
+        if(obj.removeEventListener){
+          obj.removeEventListener(events, func, false);
+        }else if(obj.detachEvent){
+          obj.detachEvent("on" + events, func);
+        }else {
+          delete obj["on" + events];
+        }
+      }
+      ,
       // 判断浏览器
       ifBrowser: function () {
         // 取得浏览器的userAgent字符串
@@ -354,7 +367,8 @@
     return {
       css: app.css,
       bufferMove: app.bufferMove,
-      bind: app.addEventBind,
+      on: app.addEventBind,
+      off: app.removeEvent,
       getBrowser: app.ifBrowser,
       typeNode: app.getNode,
       iframeHei: app.setIframeHeight,

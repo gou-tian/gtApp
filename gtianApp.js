@@ -2,15 +2,15 @@
  * author GouTian
  * E-Mail goutian@foxmail.com
  * Created on 2016-04-14.
- * Last modified time 2016-04-22 15:56
+ * Last modified time 2016-05-11 04:54
  */
-(function (window) {
-  var tian = (function () {
+(function(window) {
+  var tian = (function() {
     var type = {};
     var toString = type.toString;
     var app = {
       // 获取css属性值
-      css: function (obj, attr) {
+      css: function(obj, attr) {
         // 标准浏览器与IE非标准浏览器兼容处理
         if (obj.currentStyle) {
           // IE非标准浏览器
@@ -22,13 +22,13 @@
         }
       },
       // 缓动动画
-      bufferMove: function (obj, valName, func) {
+      bufferMove: function(obj, valName, func) {
         clearInterval(obj.iTime);
         //速度值计算变量
         var iSpeed = 0;
         var num = 0;
         //开启定时器
-        obj.iTime = setInterval(function () {
+        obj.iTime = setInterval(function() {
           //设置多属性判断条件
           var iSwitch = true;
           //循环json获取属性及属性值
@@ -68,30 +68,29 @@
         }, 14);
       },
       // 事件绑定
-      addEventBind: function (obj, events, func) {
+      addEventBind: function(obj, events, func) {
         if (obj.addEventListener) {
           obj.addEventListener(events, func, false);
-        } else if(obj.attachEvent){
-          obj.attachEvent('on' + events, function () {
+        } else if (obj.attachEvent) {
+          obj.attachEvent('on' + events, function() {
             func.call(obj);
           });
-        }else{
+        } else {
           obj["on" + events] = func;
         }
       },
       // 删除事件
-      removeEvent: function(obj,events,func){
-        if(obj.removeEventListener){
+      removeEvent: function(obj, events, func) {
+        if (obj.removeEventListener) {
           obj.removeEventListener(events, func, false);
-        }else if(obj.detachEvent){
+        } else if (obj.detachEvent) {
           obj.detachEvent("on" + events, func);
-        }else {
+        } else {
           delete obj["on" + events];
         }
-      }
-      ,
+      },
       // 判断浏览器
-      ifBrowser: function () {
+      ifBrowser: function() {
         // 取得浏览器的userAgent字符串
         var userAgent = navigator.userAgent;
         var isOpera = userAgent.indexOf("Opera") > -1;
@@ -117,7 +116,7 @@
         }
       },
       // 获取指定节点
-      getNode: function (nodes, type) {
+      getNode: function(nodes, type) {
         type = type || 1;
         var aResult = [];
         for (var i = 0, len = nodes.length; i < len; i++) {
@@ -128,7 +127,7 @@
         return aResult;
       },
       // 获取iframe高度
-      setIframeHeight: function (contentID, boxID) {
+      setIframeHeight: function(contentID, boxID) {
         boxID = boxID || null;
         var frameWin = document.getElementById(contentID);
         var frameBox = document.getElementById(boxID);
@@ -145,7 +144,7 @@
         frameWin.style.height = newHeight;
       },
       // HTML5 上传图片预览
-      fileReader: function (inputs, box) {
+      fileReader: function(inputs, box) {
         var oImg = document.getElementById(box);
         var oInput = document.getElementById(inputs);
         if (typeof FileReader === 'undefined') {
@@ -179,23 +178,25 @@
             reader.readAsDataURL(elem);
             //最后在onload事件中，获取到成功读取的文件内容，并以插入一个img节点的方式显示选中的图片
             oImg.innerHTML = '';
-            that.bind(reader, 'load', function () {
+            that.bind(reader, 'load', function() {
               oImg.innerHTML += '<img src="' + this.result + '" title="' + elem.name + '"/>';
             });
           }
         }
       },
       // 数据类型判断
-      type: function (obj) {
+      type: function(obj) {
         return toString.call(obj).split('object ').pop().trim().split(']').shift();
       }
     };
+
     function getViewportWH() {
       return {
         w: document.documentElement.clientWidth,
         h: document.documentElement.clientHeight
       };
     }
+
     function touchAngle(touchObj, showHide) {
       var setting = {
         show: showHide.show,
@@ -223,19 +224,18 @@
           result = 1;
         } else if (angle >= -135 && angle < -45) {
           result = 2;
-        }
-        else if ((angle >= 135 && angle <= 180) || (angle >= -180 && angle < -135)) {
+        } else if ((angle >= 135 && angle <= 180) || (angle >= -180 && angle < -135)) {
           result = 3;
         }
         return result;
       }
       //滑动处理
       var startX, startY;
-      bind(touchObj, 'touchstart', function (ev) {
+      bind(touchObj, 'touchstart', function(ev) {
         startX = ev.touches[0].pageX;
         startY = ev.touches[0].pageY;
       });
-      bind(touchObj, 'touchend', function (ev) {
+      bind(touchObj, 'touchend', function(ev) {
         var endX, endY;
         endX = ev.changedTouches[0].pageX;
         endY = ev.changedTouches[0].pageY;
@@ -262,6 +262,7 @@
             break;
           default:
         }
+
         function ifFn(setting) {
           if (typeof setting != 'undefined') {
             setting();
@@ -273,10 +274,11 @@
     }
     // 元素拖动
     function drag(dom) {
-      dom.onmousedown = function (e) {
+      dom.onmousedown = function(e) {
         this.style.cursor = 'move';
         down.call(this, e);
       };
+
       function down(e) {
         e = e || window.event;
         var mouseY = e.clientY - this.offsetTop;
@@ -285,13 +287,14 @@
         if (this.setCapture) {
           this.setCapture();
         }
-        document.onmousemove = function (e) {
+        document.onmousemove = function(e) {
           move.call(null, e, mouseX, mouseY);
         };
-        document.onmouseup = function () {
+        document.onmouseup = function() {
           removeEvent.call(dom);
         };
       }
+
       function move(e, x, y) {
         var
           ev = e || event,
@@ -302,6 +305,7 @@
         dom.style.top = docY + 'px';
         dom.style.left = docX + 'px';
       }
+
       function removeEvent() {
         //清空事件
         document.onmousemove = null;
@@ -322,41 +326,51 @@
       var regStr_chrome = /chrome\/[\d.]+/gi;
       var regStr_saf = /safari\/[\d.]+/gi;
       // MsIe
-      if (agent.indexOf("msie") > 0) { return agent.match(regStr_ie); }
+      if (agent.indexOf("msie") > 0) {
+        return agent.match(regStr_ie);
+      }
       // Firefox
-      if (agent.indexOf("firefox") > 0) { return agent.match(regStr_ff); }
+      if (agent.indexOf("firefox") > 0) {
+        return agent.match(regStr_ff);
+      }
       // Chrome
-      if (agent.indexOf("chrome") > 0) { return agent.match(regStr_chrome); }
+      if (agent.indexOf("chrome") > 0) {
+        return agent.match(regStr_chrome);
+      }
       // Safari
-      if (agent.indexOf("safari") > 0 && agent.indexOf("chrome") < 0) { return agent.match(regStr_saf); }
+      if (agent.indexOf("safari") > 0 && agent.indexOf("chrome") < 0) {
+        return agent.match(regStr_saf);
+      }
     }
     // 判断小于IE10的IE浏览器
     function judgeIeBrowser(dom) {
-      if (this.user !== 'msie') { return false; }
+      if (this.user !== 'msie') {
+        return false;
+      }
       dom.value = '用户名';
       if (this.user === 'msie' && parseInt(this.verinfo) < 10) {
         if (dom.type === 'password') {
           dom.type = 'text';
           dom.value = '密码';
-          dom.onfocus = function () {
+          dom.onfocus = function() {
             dom.type = 'password';
             dom.value = '';
           };
-          dom.onblur = function () {
+          dom.onblur = function() {
             if (this.value === '') {
               dom.type = 'text';
               dom.value = '密码';
             }
           };
         } else {
-          dom.onfocus = function () {
+          dom.onfocus = function() {
             if (this.value === '用户名') {
               this.value = '';
             } else {
               return false;
             }
           };
-          dom.onblur = function () {
+          dom.onblur = function() {
             if (this.value === '') {
               this.value = '用户名';
             }
@@ -364,6 +378,19 @@
         }
       }
     }
+    // 获取光标起始和结束位置
+    var seat = (function() {
+      var start = 0,
+        end = 0;
+      if (typeof this.selectionStart === 'number') {
+        start = this.selectionStart;
+        end = this.selectionEnd;
+      }
+      return {
+        start: start,
+        end: end
+      };
+    }());
     return {
       css: app.css,
       bufferMove: app.bufferMove,
@@ -379,8 +406,9 @@
       type: app.type,
       getBrowserType: (getBrowser() + '').replace(/[0-9+\/+.\s]/ig, ""),
       getBrowserNum: (getBrowser() + '').replace(/[^0-9.]/ig, ""),
-      ieBrowser: judgeIeBrowser
+      ieBrowser: judgeIeBrowser,
+      seat: seat
     };
-  } ());
+  }());
   window.tian = tian;
-} (typeof window !== 'undefined' ? window : this));
+}(typeof window !== 'undefined' ? window : this));

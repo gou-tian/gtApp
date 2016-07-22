@@ -2,12 +2,13 @@
  * author GouTian
  * E-Mail goutian@foxmail.com
  * Created on 2016-04-14.
- * Last modified time 2016-05-8 (+8)05:22
+ * Last modified time 2016-07-22 (+8)02:47
  */
 (function(window) {
 	var tian = (function() {
 		var type = {};
 		var toString = type.toString;
+
 		var app = {
 			// 获取css属性值
 			css: function(obj, attr) {
@@ -187,6 +188,17 @@
 				return toString.call(obj).split('object ').pop().trim().split(']').shift();
 			}
 		};
+
+		var objectType = (function() {
+			return {
+				isPlainObject: function(obj) {
+					return app.type(obj) === 'object';
+				},
+				isArray: Array.isArray || function(obj) {
+					return app.type(obj) === 'array';
+				}
+			};
+		}());
 
 		function getViewportWH() {
 			return {
@@ -402,44 +414,46 @@
 				toStr: toString
 			};
 		});
-		// 深、浅度拷贝仿jQuery方法
+		// 仿jQuery extend 深、浅度拷贝
 		function extend() {
-			var src, copyArray, copy, name, opt, cloen,
+			var src, copyIsArray, copy, name, options, clone,
 				target = arguments[0] || {},
+				len = arguments.length,
 				i = 1,
-				length = arguments.length,
-				deep = false;
+				deep = false,
+				type = objectType;
+
 			if (typeof target === 'boolean') {
 				deep = target;
 				target = arguments[i] || {};
 				i++;
 			}
-			if (typeof target !== 'object' && tian.type(target) !== 'function') {
+
+			if (typeof target === 'object' && typeof target === 'function') {
 				target = {};
 			}
-			if (i === length) {
-				target = this;
-				i--;
-			}
-			
-			for (; i < length; i++) {
-				if ((opt = arguments[i]) != null) {
-					for (name in opt) {
+
+			for (; i < len; i++) {
+
+				if ((option = arguments[i]) !== null) {
+
+					for (name in option) {
 						src = target[name];
-						copy = opt[name];
+						copy = option[name];
+
 						if (target === copy) {
-							// 避免复制已有属性
 							continue;
 						}
-						if (deep && copy && (tian.type(copy) === 'object' ||
-								tian.type(copy) === 'array')) {
-							if (copyArray) {
-								copyArray = false;
-								clone = src && tian.type(copy) === 'array' ? src : [];
+
+						if (deep && copy && (type.isPlainObject(copy) ||
+								(copyIsArray = type.isArray(copy)))) {
+							if (copyIsArray) {
+								copyIsArray = false;
+								clone = src && type.isArray(src) ? src : [];
 							} else {
-								clone = src && tian.type(copy) === 'object' ? src : {};
+								clone = src && type.isPlainObject(src) ? src : {};
 							}
-							target[name] = extend(deep, clon, copy);
+							target[name] = extend(deep, clone, copy);
 						} else if (copy !== undefined) {
 							target[name] = copy;
 						}

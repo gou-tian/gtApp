@@ -2,7 +2,7 @@
  * author GouTian
  * E-Mail goutian@foxmail.com
  * Created on 2016-04-14.
- * Last modified time 2016-07-22 (+8)02:47
+ * Last modified time 2016-07-25 (+8)09:06
  */
 (function(window) {
 	var tian = (function() {
@@ -414,7 +414,7 @@
 				toStr: toString
 			};
 		});
-		// 仿jQuery extend 深、浅度拷贝
+		// 深、浅度拷贝
 		function extend() {
 			var src, copyIsArray, copy, name, options, clone,
 				target = arguments[0] || {},
@@ -462,6 +462,18 @@
 			}
 			return target;
 		}
+		// 节流函数测试
+		function choke(func, times) {
+			times = times || 500;
+			window.onresize = function() {
+				clearTimeout(func.timer);
+				func.timer = setTimeout(function() {
+					if (typeof func === 'function' && typeof func !== 'object') {
+						func();
+					}
+				}, times);
+			};
+		}
 		return {
 			css: app.css,
 			bufferMove: app.bufferMove,
@@ -479,7 +491,8 @@
 			getBrowserNum: (getBrowser() + '').replace(/[^0-9.]/ig, ""),
 			ieBrowser: judgeIeBrowser,
 			seat: seat,
-			extend: extend
+			extend: extend,
+			choke: choke
 		};
 	}());
 	window.tian = tian;

@@ -474,6 +474,20 @@
 				}, times);
 			};
 		}
+		// 函数重载
+		function addMethod(object, name, fn) {
+			//保存原有的函数，因为调用的时候可能不匹配传入的参数个数
+			var old = object[name];
+			object[name] = function() {
+				if (fn.length == arguments.length) {
+					//如果该匿名函数的形参个数和实数个数匹配，就调用该函数
+					return fn.apply(this, arguments);
+				} else if (typeof old == 'function') {
+					//如果传入的参数个数不匹配，则调用原有的参数
+					return old.apply(this, arguments);
+				}
+			};
+		}
 		return {
 			css: app.css,
 			bufferMove: app.bufferMove,
@@ -492,7 +506,8 @@
 			ieBrowser: judgeIeBrowser,
 			seat: seat,
 			extend: extend,
-			choke: choke
+			choke: choke,
+			addMethod: addMethod
 		};
 	}());
 	window.tian = tian;

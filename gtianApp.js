@@ -463,16 +463,25 @@
 			return target;
 		}
 		// 节流函数测试
-		function choke(func, times) {
-			times = times || 500;
-			window.onresize = function() {
-				clearTimeout(func.timer);
-				func.timer = setTimeout(function() {
-					if (typeof func === 'function' && typeof func !== 'object') {
-						func();
-					}
-				}, times);
-			};
+		function throttle(method, delay, duration) {
+			delay = 100;
+			duration = 300;
+			var timer = null,
+				begin = new Date();
+			return (function() {
+				var context = this,
+					args = arguments,
+					current = new Date();
+				clearTimeout(timer);
+				if (current - begin >= duration) {
+					method.apply(context, args);
+					begin = current;
+				} else {
+					timer = setTimeout(function() {
+						method.apply(context, args);
+					}, delay);
+				}
+			}());
 		}
 		// 函数重载
 		function addMethod(object, name, fn) {
@@ -506,7 +515,7 @@
 			ieBrowser: judgeIeBrowser,
 			seat: seat,
 			extend: extend,
-			choke: choke,
+			choke: throttle,
 			addMethod: addMethod
 		};
 	}());

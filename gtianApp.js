@@ -497,6 +497,26 @@
 				}
 			};
 		}
+		//时钟
+		function clock(obj){
+			var gtTime = new Date();
+			var gtYear = gtTime.getFullYear(); // 年
+			var gtMonth = gtTime.getMonth() + 1; // 月
+			var gtDate = gtTime.getDate(); // 日
+			var gtDay = (function(){
+				var rel = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+				return rel[gtTime.getDay()];
+			}());
+			var gtHours = gtTime.getHours(); //时
+			var gtMinute = gtTime.getMinutes(); //分
+			var gtSecond = gtTime.getSeconds(); //秒
+			var timeObj = obj.children;
+			var str = gtYear + '-' + zeroize(gtMonth) + '-' + zeroize(gtDate) + ' ' + gtDay + ' ' + zeroize(gtHours) + ':' + zeroize(gtMinute) + ':' + zeroize(gtSecond);
+			obj.innerHTML = str;
+			function zeroize(obj){
+				return obj < 10 ? '0' + obj : '' + obj;
+			}
+		}
 		return {
 			css: app.css,
 			bufferMove: app.bufferMove,
@@ -516,7 +536,8 @@
 			seat: seat,
 			extend: extend,
 			choke: throttle,
-			addMethod: addMethod
+			addMethod: addMethod,
+			clock: clock
 		};
 	}());
 	window.tian = tian;

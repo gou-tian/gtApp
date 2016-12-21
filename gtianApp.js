@@ -517,6 +517,51 @@
 				return obj < 10 ? '0' + obj : '' + obj;
 			}
 		}
+		// 发布订阅		
+		var obs = (function() {
+			function subscribe(key, func) {
+				if (!this.listener[key]) {
+					this.listener[key] = [];
+				}
+				this.listener[key].push(func);
+			}
+
+			function trigger() {
+				var key = Array.prototype.shift.call(arguments),
+					fn = this.listener[key];
+				if (!fn || fn.length === 0) {
+					return false;
+				}
+				for (var attr in fn) {
+					fn[attr].apply(this, arguments);
+				}
+			}
+
+			function remove(key, func) {
+				if (!this.listener[key]) {
+					return false;
+				}
+				var fn = this.listener[key],
+					i = 0,
+					len = fn.length;
+
+				if (!func) {
+					fn.length = 0;
+				} else {
+					for (; i < len; i++) {
+						if (fn[i] === func) {
+							fn.splice(i, 1);
+						}
+					}
+				}
+			}
+			return {
+				listener: {},
+				add: subscribe,
+				trigger: trigger,
+				rm: remove
+			};
+		}());
 		return {
 			css: app.css,
 			bufferMove: app.bufferMove,
@@ -537,7 +582,8 @@
 			extend: extend,
 			choke: throttle,
 			addMethod: addMethod,
-			clock: clock
+			clock: clock,
+			obs: obs
 		};
 	}());
 	window.tian = tian;

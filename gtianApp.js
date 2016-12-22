@@ -498,13 +498,13 @@
 			};
 		}
 		//时钟
-		function clock(obj){
+		function clock(obj) {
 			var gtTime = new Date();
 			var gtYear = gtTime.getFullYear(); // 年
 			var gtMonth = gtTime.getMonth() + 1; // 月
 			var gtDate = gtTime.getDate(); // 日
-			var gtDay = (function(){
-				var rel = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+			var gtDay = (function() {
+				var rel = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 				return rel[gtTime.getDay()];
 			}());
 			var gtHours = gtTime.getHours(); //时
@@ -513,7 +513,8 @@
 			var timeObj = obj.children;
 			var str = gtYear + '-' + zeroize(gtMonth) + '-' + zeroize(gtDate) + ' ' + gtDay + ' ' + zeroize(gtHours) + ':' + zeroize(gtMinute) + ':' + zeroize(gtSecond);
 			obj.innerHTML = str;
-			function zeroize(obj){
+
+			function zeroize(obj) {
 				return obj < 10 ? '0' + obj : '' + obj;
 			}
 		}
@@ -562,6 +563,102 @@
 				rm: remove
 			};
 		}());
+		// 移动幻灯片
+		function elemMove(option) {
+			// 参数设置
+			var opt = {
+				warp: option.warp,
+				child: option.child,
+				direction: option.direction || 'Y',
+				flip: option.flip || false
+			};
+
+			// 存储视口宽高
+			var view = {
+				w: document.documentElement.clientWidth,
+				h: document.documentElement.clientHeight
+			};
+			// 定义内部变量
+			var
+				now = 0, // 
+				viewVal = 0,
+				stateTouch = 0,
+				star = 0,
+				speed = 0,
+				translate = '';
+
+			// 初始化
+			if (opt.direction === 'Y') {
+				viewVal = view.h;
+				translate = 'translateY';
+			} else if (opt.direction === 'X') {
+				viewVal = view.w;
+				translate = 'translateX';
+			}
+			// 事件监听
+			opt.warp.addEventListener('touchstart', start, false);
+			if (opt.flip) {
+				opt.warp.addEventListener('touchmove', move, false);
+			}
+			opt.warp.addEventListener('touchend', end, false);
+
+			// 子元素样式设置
+			function setChildAttr(attr, val) {
+				var i = 0,
+					len = opt.child.length;
+				for (; i < len; i++) {
+					opt.child[i].style[attr] = val;
+				}
+			}
+
+			// <% ------------------------ 事件监听 ---------------------------- %>
+			// 开始
+			function start(ev) {
+				setChildAttr('transition', 'none');
+				ev = ev.changedTouches[0];
+				if (opt.direction === 'Y') {
+					stateTouch = ev.pageY;
+				} else if (opt.direction === 'X') {
+					stateTouch = ev.pageX;
+				}
+				star = speed;
+			}
+			// 滑动
+			function move(ev) {
+				ev = ev.changedTouches[0];
+				var dis;
+				if (opt.direction === 'Y') {
+					dis = ev.pageY - stateTouch;
+				} else if (opt.direction === 'X') {
+					dis = ev.pageX - stateTouch;
+				}
+				speed = star + dis;
+				setChildAttr('WebkitTransform', translate + "(" + speed + "px)");
+				setChildAttr('transform', translate + "(" + speed + "px)");
+			}
+			// 结束
+			function end(ev) {
+				now = speed / viewVal;
+				now = -Math.round(now);
+				if (now < 0) now = opt.child.length - 1;
+				if (now > opt.child.length - 1) {
+					now = 0;
+					setChildAttr('WebkitTransform', translate + "(0)");
+					setChildAttr('transform', translate + "(0)");
+				}
+				// 判断是否滑动翻页
+				if (opt.flip)
+					page();
+			}
+
+			function page() {
+				speed = -now * viewVal;
+				setChildAttr('transition', '0.5s');
+				setChildAttr('WebkitTransform', translate + "(" + speed + "px)");
+				setChildAttr('transform', translate + "(" + speed + "px)");
+			}
+		}
+
 		return {
 			css: app.css,
 			bufferMove: app.bufferMove,
@@ -583,7 +680,8 @@
 			choke: throttle,
 			addMethod: addMethod,
 			clock: clock,
-			obs: obs
+			obs: obs,
+			elemMove: elemMove
 		};
 	}());
 	window.tian = tian;
